@@ -1,0 +1,102 @@
+version: "3"
+
+services:
+  ############################
+  # Publisher app + Dapr sidecar
+  ############################
+  publisherapp:
+    build: ./dapr-publisher
+    depends_on:
+      - redis
+      - placement
+      - subscriberapp
+    restart: unless-stopped
+    ports:
+      - "50003:50003"
+    networks:
+      - dapr-network
+  publisherapp-dapr:
+    image: "daprio/daprd:edge"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "publisherapp",
+        "-app-protocol",
+        "grpc",
+        "-app-port",
+        "50003",
+        "-log-level",
+        "info",
+        "-placement-host-address",
+        "placement:50006",
+        "-components-path",
+        "/components",
+      ]
+    volumes:
+      - "./components/:/components"
+    depends_on:
+      - publisherapp
+    network_mode: "service:publisherapp"
+  ############################
+  # Subscriber app + Dapr sidecar
+  ############################
+  subscriberapp:
+    build: ./dapr-subscriber
+    depends_on:
+      - redis
+      - placement
+    restart: unless-stopped
+    ports:
+      - 8088:8088
+    networks:
+      - dapr-network
+  subscriberapp-dapr:
+    image: "daprio/daprd:edge"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "subscriberapp",
+        "-app-protocol",
+        "grpc",
+        "-app-port",
+        "50010",
+        "-log-level",
+        "info",
+        "-placement-host-address",
+        "placement:50006",
+        "-components-path",
+        "/components",
+      ]
+    volumes:
+      - "./components/:/components"
+    depends_on:
+      - subscriberapp
+    network_mode: "service:subscriberapp"
+  ############################
+  # Dapr placement service
+  ############################
+  placement:
+    image: "daprio/dapr"
+    command: ["./placement", "-port", "50006"]
+    ports:
+      - "50006:50006"
+    networks:
+      - dapr-network
+
+  ############################
+  # Redis state store
+  ############################
+  redis:
+    image: "redis:alpine"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - DISABLE_COMMANDS=FLUSHDB,FLUSHALL,CONFIG
+    ports:
+      - "6379:6379"
+    networks:
+      - dapr-network
+
+networks:
+  dapr-network:

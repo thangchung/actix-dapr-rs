@@ -1,20 +1,24 @@
 # What we do in this project?
 
-We want to run `dapr` with rust, but also wants to run `actix-web` and other grpc endpoint with `tonic` in place? 
+We want to use `dapr` with `dapr-rs`, but also wants to run `actix-web` and other gRPC lib such as `tonic` in the same?
 
 # Why we did that?
 
-`dapr-rust-sdk` is only with very basic sample on `tokio`, and we want to combine all of them together. Let do it to see how far we can go there :)
+`dapr-rust-sdk` is only with very basic sample on `tokio`, but what we want to do is more :) We want to combine all of them together (`dapr` + `actix-web` + `tokio` + `tonic`). Let do it to see how far we can go there :)
 
 # How to run
 
-Make sure you have `dapr`: CLI version: 1.1.0 and Runtime version: 1.1.2 on your machine
+Make sure you have `dapr` CLI on local machine:
+
+> CLI version: 1.1.0
+>
+> Runtime version: 1.1.2
 
 ```bash
 $ dapr init
 ```
 
-## Run standalone mode:
+## Run standalone mode
 
 ```bash
 $  dapr run --app-id rust-subscriber --app-protocol grpc --app-port 50010 --log-level debug cargo run
@@ -34,7 +38,13 @@ And you can call `Helloworld` on `50010` - `http2` as well as access to `http://
 
 ## Run on docker-compose
 
-> Not working yet :(
+If you run `dapr` CLI before on your local machine, plz make sure you run
+
+```bash
+$ dapr uninstall --all
+```
+
+And now run the following commands:
 
 ```bash
 $ docker-compose build

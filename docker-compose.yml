@@ -1,5 +1,4 @@
 version: "3"
-
 services:
   ############################
   # Publisher app + Dapr sidecar
@@ -9,12 +8,21 @@ services:
     depends_on:
       - redis
       - placement
-      - subscriberapp
     restart: unless-stopped
     ports:
       - "50003:50003"
     networks:
       - dapr-network
+  # publisherapp:
+  #   build: ./dapr-publisher-dotnet
+  #   depends_on:
+  #     - redis
+  #     - placement
+  #   restart: unless-stopped
+  #   ports:
+  #     - "50003:50003"
+  #   networks:
+  #     - dapr-network
   publisherapp-dapr:
     image: "daprio/daprd:edge"
     command:
@@ -24,8 +32,6 @@ services:
         "publisherapp",
         "-app-protocol",
         "grpc",
-        "-app-port",
-        "50003",
         "-log-level",
         "info",
         "-placement-host-address",
@@ -78,7 +84,7 @@ services:
   # Dapr placement service
   ############################
   placement:
-    image: "daprio/dapr"
+    image: "daprio/dapr:edge"
     command: ["./placement", "-port", "50006"]
     ports:
       - "50006:50006"

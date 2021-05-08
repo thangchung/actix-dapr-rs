@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "dapr_publisher_dotnet": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "hotReloadProfile": "aspnetcore",
+      "dotnetRunMessages": "true",
+      "applicationUrl": "http://localhost:5000"
+    }
+  }
+}

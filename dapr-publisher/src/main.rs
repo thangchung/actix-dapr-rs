@@ -7,8 +7,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     thread::sleep(Duration::from_secs(2));
 
     // Get the Dapr port and create a connection
-    let port: u16 = std::env::var("DAPR_GRPC_PORT")?.parse()?;
-    let addr = format!("https://127.0.0.1:{}", port);
+    //let port: u16 = std::env::var("DAPR_GRPC_PORT")?.parse()?.;
+    let addr = format!("https://127.0.0.1:{}", 50001);
 
     println!("Publishing to: {}", &addr);
 
